@@ -1,7 +1,7 @@
 import { useState } from "react"
 import axios from "axios"
 
-const TicketForm = ({ park }) => {
+const Ticket = ({ ticket }) => {
   const [formData, setFormData] = useState({
     customerName: "",
     customerEmail: "",
@@ -19,7 +19,7 @@ const TicketForm = ({ park }) => {
 
     try {
       await axios.post("http://localhost:3000/tickets", {
-        park: park._id,
+        ticket: ticket._id,
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
         quantity: Number(formData.quantity),
@@ -72,4 +72,4 @@ const TicketForm = ({ park }) => {
   )
 }
 
-export default TicketForm
+export default Ticket
