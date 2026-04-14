@@ -1,7 +1,8 @@
 import { useState } from "react"
 import axios from "axios"
+import { BASE_URL } from "../global.js"
 
-const Ticket = ({ ticket }) => {
+const Ticket = ({ park }) => {
   const [formData, setFormData] = useState({
     customerName: "",
     customerEmail: "",
@@ -11,21 +12,24 @@ const Ticket = ({ ticket }) => {
   const [message, setMessage] = useState("")
 
   const handleChange = (e) => {
-    setFormData({ ...FormData, [e.target.name]: e.target.value })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const totalPriceCalculated = park.price * Number(formData.quantity)
 
     try {
-      await axios.post("http://localhost:3000/tickets", {
-        ticket: ticket._id,
+      await axios.post(`${BASE_URL}tickets`, {
+        park: park._id,
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
         quantity: Number(formData.quantity),
+        totalprice: totalPriceCalculated,
       })
 
       setMessage("Ticket booked successfully!")
+
       setFormData({
         customerName: "",
         customerEmail: "",
@@ -38,12 +42,12 @@ const Ticket = ({ ticket }) => {
 
   return (
     <div className="ticket-form">
-      <h2>Buy Tickets</h2>
+      <h2>Buy Tickets for {park.name}</h2>
 
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="CustomerName"
+          name="customerName"
           placeholder="Your Name"
           value={formData.customerName}
           onChange={handleChange}
@@ -60,10 +64,13 @@ const Ticket = ({ ticket }) => {
         <input
           type="number"
           name="quantity"
-          placeholder="Number of Tickets"
+          placeholder="quantity"
           value={formData.quantity}
           onChange={handleChange}
         />
+        <h1>
+          totalprice:${formData.quantity ? park.price * formData.quantity : 0}
+        </h1>
 
         <button type="submit">Reserve</button>
       </form>
