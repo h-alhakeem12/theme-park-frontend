@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react"
 import axios from "axios"
 import { BASE_URL } from "../global.js"
+import Ticket from "./Ticket"
 
 const Home = () => {
   const [parks, setParks] = useState([])
+  const [selectedPark, setSelectedPark] = useState(null)
 
   useEffect(() => {
     const getParks = async () => {
@@ -23,6 +25,7 @@ const Home = () => {
           <p>{park.description}</p>
           <p>Location: {park.location}</p>
           <h3>Price: ${park.price}</h3>
+          <button onClick={<Ticket />}>Buy Ticket</button>
         </div>
       ))}
     </div>
