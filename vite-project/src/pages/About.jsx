@@ -29,7 +29,7 @@ const styles = {
   },
 
   box: {
-    border: "1px solid #8b5e76",
+    border: "1px solid #2c292b",
     padding: "30px",
     textAlign: "center",
     width: "600px",

@@ -20,8 +20,8 @@ const Parks = () => {
       {selectedPark ? (
         <Ticket park={selectedPark} />
       ) : (
-        <div className="parks-list">
-          <h1>All Parks</h1>
+        <div className="parks-list" style={styles.page}>
+          <h1>  All Parks</h1>
           {parks.map((park) => (
             <div key={park._id} className="park-card">
               <h2>{park.name}</h2>
@@ -33,13 +33,30 @@ const Parks = () => {
               <p>{park.description}</p>
               <p>Location: {park.location}</p>
               <h3>Price: ${park.price}</h3>
-              <button onClick={() => setSelectedPark(park)}>buy ticket</button>
+              <button style={styles.button} onClick={() => setSelectedPark(park)}>Buy Tickets</button>
             </div>
           ))}
         </div>
       )}
     </div>
   )
+}
+
+
+const styles = {
+  page: {
+     fontFamily: "Patrick Hand, cursive",
+  },
+    button: {
+    padding: "10px 20px",
+    fontSize: "18px",
+    cursor: "pointer",
+    backgroundColor: "#6b3862",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    fontFamily: "Patrick Hand, cursive",
+  },
 }
 
 export default Parks
