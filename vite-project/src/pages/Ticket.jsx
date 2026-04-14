@@ -10,6 +10,7 @@ const Ticket = ({ park }) => {
   })
 
   const [message, setMessage] = useState("")
+  const [lastTicketId, setLastTicketId] = useState(null)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -20,7 +21,7 @@ const Ticket = ({ park }) => {
     const totalPriceCalculated = park.price * Number(formData.quantity)
 
     try {
-      await axios.post(`${BASE_URL}tickets`, {
+      const response = await axios.post(`${BASE_URL}tickets`, {
         park: park._id,
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
@@ -28,66 +29,81 @@ const Ticket = ({ park }) => {
         totalprice: totalPriceCalculated,
       })
 
+      setLastTicketId(response.data._id)
       setMessage("Ticket booked successfully!")
 
-      setFormData({
-        customerName: "",
-        customerEmail: "",
-        quantity: "",
-      })
+      setFormData({ customerName: "", customerEmail: "", quantity: "" })
     } catch (error) {
       setMessage("Error booking ticket")
     }
   }
 
+  const handleCancel = async () => {
+    if (!lastTicketId) return
+
+    try {
+      await axios.delete(`${BASE_URL}tickets/${lastTicketId}`)
+      setMessage("Reservation cancelled successfully.")
+      setLastTicketId(null)
+    } catch (error) {
+      setMessage("Error cancelling reservation.")
+      console.error(error)
+    }
+  }
+
   return (
     <div style={styles.page}>
-    <div style={styles.box}>
-      <h2>Buy Tickets for {park.name}</h2>
+      <div style={styles.box}>
+        <h2>Buy Tickets for {park.name}</h2>
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          type="text"
-          name="customerName"
-          placeholder="Your Name"
-          value={formData.customerName}
-          onChange={handleChange}
-          style={styles.input}
-        />
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <input
+            type="text"
+            name="customerName"
+            placeholder="Your Name"
+            value={formData.customerName}
+            onChange={handleChange}
+            style={styles.input}
+          />
+          <input
+            type="email"
+            name="customerEmail"
+            placeholder="Your Email"
+            value={formData.customerEmail}
+            onChange={handleChange}
+            style={styles.input}
+          />
+          <input
+            type="number"
+            name="quantity"
+            placeholder="Quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+            style={styles.input}
+          />
 
-        <input
-          type="email"
-          name="customerEmail"
-          placeholder="Your Email"
-          value={formData.customerEmail}
-          onChange={handleChange}
-          style={styles.input}
-        />
+          <h3>
+            Total Price: $
+            {formData.quantity ? park.price * formData.quantity : 0}
+          </h3>
 
-        <input
-          type="number"
-          name="quantity"
-          placeholder="quantity"
-          value={formData.quantity}
-          onChange={handleChange}
-          style={styles.input}
-        />
+          <button type="submit" style={styles.button}>
+            Reserve
+          </button>
+        </form>
 
-        <h3>
-          total price: $
-          {formData.quantity ? park.price * formData.quantity : 0}
-        </h3>
+        {lastTicketId && (
+          <button onClick={handleCancel} style={styles.button1}>
+            Cancel Reservation
+          </button>
+        )}
 
-        <button type="submit" style={styles.button}>
-          Reserve
-        </button>
-      </form>
-
-      {message && <p>{message}</p>}
+        {message && <p style={styles.messageText}>{message}</p>}
+      </div>
     </div>
-  </div>
   )
 }
+
 const styles = {
   page: {
     height: "80vh",
@@ -96,7 +112,6 @@ const styles = {
     alignItems: "center",
     fontFamily: "Patrick Hand, cursive",
   },
-
   box: {
     border: "1px solid #2c292b",
     padding: "20px",
@@ -104,30 +119,40 @@ const styles = {
     width: "400px",
     borderRadius: "5px",
   },
-
   form: {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
     fontFamily: "Patrick Hand, cursive",
-
   },
-
   input: {
     padding: "5px",
-        fontFamily: "Patrick Hand, cursive",
-
+    fontFamily: "Patrick Hand, cursive",
   },
-
   button: {
-  padding: "10px 20px",
+    padding: "10px 20px",
     fontSize: "18px",
     cursor: "pointer",
     backgroundColor: "#6b3862",
     color: "#fff",
     border: "none",
     borderRadius: "5px",
-    fontFamily: "Patrick Hand, cursive"
+    fontFamily: "Patrick Hand, cursive",
+  },
+  button1: {
+    padding: "10px 20px",
+    fontSize: "18px",
+    cursor: "pointer",
+    backgroundColor: "#c43d3d",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    fontFamily: "Patrick Hand, cursive",
+  },
+  messageText: {
+    marginTop: "15px",
+    fontWeight: "bold",
+    color: "#2c292b",
   },
 }
 
